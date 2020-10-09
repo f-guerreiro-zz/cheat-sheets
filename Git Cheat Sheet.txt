@@ -1,0 +1,38 @@
+--git Cheat Sheet
+
+c:\>git config --global user.name "<USER-NAME>"
+
+c:\>git config --global user.email "<E-MAIL>"
+
+--clone repo
+git clone <GIT-ADDRESS>
+
+--access repo
+cd <REPO-FOLDER-NAME>
+
+--create branch
+git branch <BRANCH-NAME>
+
+--push branch files
+git push --set-upstream origin <BRANCH-NAME>
+
+--check out branch
+git checkout <BRANCH-NAME>
+
+--add new changes to branch
+git add <FILE-NAME-TO-ADD>
+
+--send branch commit
+git commit -m "<YOUR-MESSAGE>"
+
+--Check out to the master branch
+git checkout master
+
+--Merge your branch
+git merge <BRANCH-NAME>
+
+--Push the merged history to GitHub
+git push
+
+--Delete your the branch locally
+git branch -d <BRANCH-NAME>
