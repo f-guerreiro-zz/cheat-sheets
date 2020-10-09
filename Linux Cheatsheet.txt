@@ -1,0 +1,26 @@
+Linux Cheatsheet
+
+cd = back to home folder
+cd Documents/ = navigate to a new dir
+pwd = shows where you are
+cd Exercise\ Files = if name contains space use \ space
+ls = list folder contents
+ls -R departments= lists everything inside de folder
+cd .. = goes back one folder
+cd ../../finance/spreadsheets = goes back two folders and then enters the other two
+cd - = goes back to prev folder
+mkdir New_folder = create dir
+rmdir new_folder = remove dir
+cp poems.txt poems2.txt = copy the file
+cp simple_data.txt departments/hr/employee\ info/ = copy file to another dir
+mv poems2.txt departments/marketing = move file to another folder
+mv departments/marketing/poems2.txt departments/marketing/leterature.txt = renames file
+rm literature.txt = deletes file
+cat poems.txt = displays file text contents
+head, tail = shows 10 lines of txt file
+less = navigates inside the file txt
+grep "the" poems.txt = find "the" inside poems text file !case sensitive
+vim = file editor
+:w = saves file
+esc = exit edit mode
+i = enter edit mode
