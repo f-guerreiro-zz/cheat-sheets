@@ -1,4 +1,4 @@
-Linux Cheatsheet
+Linux commands
 
 cd = back to home folder
 cd Documents/ = navigate to a new dir
