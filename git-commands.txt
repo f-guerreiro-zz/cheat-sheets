@@ -1,4 +1,4 @@
---git Cheat Sheet
+--git commands
 
 c:\>git config --global user.name "<USER-NAME>"
 
