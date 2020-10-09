@@ -1,4 +1,4 @@
-Network Troubleshooting
+Network Basic Troubleshooting
 
 Check if problem is on server or Network
 >/nslookup
