@@ -1,0 +1,20 @@
+Network Troubleshooting
+
+Check if problem is on server or Network
+>/nslookup
+google.com
+
+Check if the problem is on network or user machine
+>ping google.com --count --t
+
+check ip currently
+ipconfig
+
+see if the network is broken somewhere else
+tracert
+
+see if port is working
+telnet ip port
+
+see which ports are in use
+netstat -t
