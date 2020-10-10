@@ -1,0 +1,136 @@
+DBA cheat sheet
+
+df -h	Espaço em disco
+ls -lSh	Mostra o tamanho do arquivo
+du -xkS /u01 | sort -rn | head -15	Mostra os 15 diretorios mais cheios
+ls -lSh | head -15	pega os maiores 15 arquivos do diretório
+UPTIME	Tempo que o server esta ligado
+HOSTNAME	Diz o nome do server
+ps -ef | grep emagent	Informa se esta rodando um processo chamado emagent
+tail -10000 phcmp1_pmon_16346.trc > phcmp1_pmon_16346.trc.10000	pega só as ultimas 10000 linhas e sobrescreve o aquivo
+gzip  {nome do arquivo}	zipa o arquivo
+lsof * | awk '{ print $9 }' | sort -u	Diz se algum arquivo esta sendo usado naquele diretório
+find . -type f -size +1024k -mtime +7 -exec ls -larth {} \;	Lista os arquivos com mais de 1MB e clom mais de uma semana
+find . -type f -size +1024k -mtime +7 -exec rm -f {} \;	remove os arquivos com mais de 1MB e com mais de uma semana
+find /u01/app/oracle/admin/procp/bdump -mtime +2 -name '*.trc' -exec gzip {} \; &	Localiza nesse diretório arquivos de trace com mais de 2 dias, executa o zip e o que encontrar bota dentro da chave
+
+find /u01/app/oracle/diag/tnslsnr/ausm2gapcdrdb04/listener_ausm2gapcdrdb04/alert -type f -size +0 -mtime +7 -exec rm -f {} \;
+find /u01/app/oracle/diag/tnslsnr/ausm2gapcdrdb04/listener_ausm2gapcdrdb04/alert -type f -size +0 -mtime +0 -exec gzip -9qf {} \;
+Alter database datafile '+DATA_1/kcsp_dr/datafile/dwstg_data.465.875977415' autoextend on maxsize 20g;
+Alter database datafile '+DATA_1/salup/datafile/oci_lob_data.2207.884348511' autoextend on maxsize unlimited;
+
+ps -ef | grep "java"
+ps -ef | grep smon
+
+sqlplus user/password@host:port/database
+
+lsnrctl status;
+lsnrctl reload listener;
+alter system register;
+crsctl check crs;
+
+df -kh <filesystem>   
+du -xkS /u01 | sort -rn | head -10   
+ls -lSh | head -10
+gzip -9qf *.xml
+
+@asm_spc
+@tbs_spc
+@db_inf
+@list
+@usr_inf
+@ses_blk
+
+SELECT * FROM sys.tables;
+select * from user_tables;
+select * from sys.tables order by schema_id;
+
+alter user <USER-NAME> identified by "PASSWORD";
+alter user SODS account unlock;
+
+SELECT * FROM all_tables where table_name like '%mod%';
+
+SELECT owner, table_name FROM dba_tables
+SELECT owner, table_name FROM all_tables
+--owned by the current user, not all tables in the database:
+SELECT table_name FROM user_tables
+
+select 'alter index '||owner||'.'||index_name||' rebuild online;' from dba_indexes where status='UNUSABLE';
+select 'alter index '||index_owner||'.'||index_name||' rebuild partition '||partition_name||' online;' from dba_ind_partitions where status='UNUSABLE';
+select 'alter index '||index_owner||'.'||index_name||' rebuild subpartition '||subpartition_name||' online;' from dba_ind_subpartitions where status='UNUSABLE';
+
+ALL_OBJECTS or ALL_PROCEDURES
+
+--Query v_$instance to get the uptime
+SELECT host_name, 
+       instance_name,
+       TO_CHAR(startup_time, 'DD-MM-YYYY HH24:MI:SS') startup_time,
+       FLOOR(sysdate-startup_time) days
+FROM   sys.v_$instance;
+
+-- Query v$session to get database uptime
+SELECT TO_CHAR(logon_time, 'DD-MM-YYYY HH24:MI:SS')
+FROM v$session 
+WHERE program LIKE '%PMON%'
+
+--Get details about long running operations
+SELECT osuser,
+       sl.sql_id,
+       sl.sql_hash_value,
+       opname,
+       target,
+       elapsed_seconds,
+       time_remaining
+  FROM v$session_longops sl
+inner join v$session s ON sl.SID = s.SID AND sl.SERIAL# = s.SERIAL#
+WHERE time_remaining > 0
+
+--Show long running SQL Statements
+SELECT s.username,
+       sl.sid,
+       sq.executions,
+       sl.last_update_time,
+       sl.sql_id,
+       sl.sql_hash_value,
+       opname,
+       target,
+       elapsed_seconds,
+       time_remaining,
+       sq.sql_fulltext
+  FROM v$session_longops sl
+ INNER JOIN v$sql sq ON sq.sql_id = sl.sql_id
+ INNER JOIN v$session s ON sl.SID = s.SID AND sl.serial# = s.serial#
+ WHERE time_remaining > 0
+ 
+ --Query locked database objects
+ SELECT DO.owner,
+       DO.object_name,
+       DO.object_type,
+       lo.session_id,
+       lo.oracle_username
+  FROM dba_objects DO, v$locked_object lo
+WHERE DO.object_id = lo.object_id
+ 
+
+--SQL Blocking sessions
+SELECT /*+ RULE */ D.INST_ID AS INST_ID, A.TYPE AS LOCK_TYPE, D.PROCESS AS PROCESS,
+SUBSTR(NUMTODSINTERVAL(A.CTIME,'SECOND'),8,15) AS LOCKED_TIME, (select object_name from dba_objects o where o.object_id = C.OBJECT_ID) object_name,
+substr(D.program,1,30) as PROGRAM,
+D.MACHINE AS MACHINE,
+D.SID AS SID,
+D.SERIAL# AS SERIAL_NUM,
+D.OSUSER AS OS_USERNAME,
+D.USERNAME AS DB_USERNAME,
+d.event
+FROM GV$LOCK A,
+DBA_OBJECTS E,
+GV$SESSION D,
+GV$LOCKED_OBJECT C
+WHERE C.SESSION_ID = D.SID
+AND E.OBJECT_ID = C.OBJECT_ID
+AND D.SID = A.SID
+AND D.INST_ID = A.INST_ID
+-- AND A.TYPE IN ('TX', 'UL', 'TM')
+AND A.TYPE IN ('TX', 'UL')
+AND A.BLOCK > 0
+ORDER BY LOCKED_TIME DESC;

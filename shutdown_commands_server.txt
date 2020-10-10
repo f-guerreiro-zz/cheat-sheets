@@ -1,0 +1,36 @@
+-s	Shuts down the comptuer.
+-r	Reboots the computer.
+-f	Force-close all running applications.
+-m \\Computer	Specifies a specific computer on the network that you want to shut down or reboot. Absent this parameter, the command affects only the local PC on which it is run.
+-t xx	Sets a delay (xx seconds) before the specified operation commences.
+-c "message"	Add your own text inside the quotations to provide remote users with a message about why and when their PC will shut down or reboot.
+/a	Aborts a shutdown or restart if used during the (-t) delay period.
+/h	Hibernates the computer.
+/?	Displays the full help document with all commands.
+
+
+shutdown -f -r -t 0 \\<SERVER-ADRESS>
+
+shutdown /r /m \\<SERVER-NAME>
+shutdown /r /m \\<SERVER-NAME>
+
+Click Start, click All Programs, click Accessories, and click Command Prompt.
+Type shutdown /[r|s] /m \\ComputerName /c "Comment" /d [u|p] <xx>:<yy> and then press ENTER.
+
+
+/r
+Restarts the remote computer.
+/s
+Shuts down the remote computer.
+/m \\ ComputerName
+Specifies the destination computer.
+/c " Comment "
+Enables you to comment in detail about the reason for the shutdown. You can use a maximum of 511 characters. Comments must be enclosed in quotation marks.
+/d [u|p] xx : yy
+Lists the reason for the system restart or shutdown, where xx specifies a major reason number from 0 through 255, and yy specifies a minor reason number from 0 through 65,535.
+/force
+Forces the computer to shut down if other users are logged in. If this is not used and other users are logged in to the remote computer, the computer will not shut down or restart.
+ImportantImportant
+If you force the computer to shut down or restart, logged in users will not have the opportunity to save their work.
+/t xxx
+Sets the time-out period before the system shuts down or restarts to xxx seconds. The valid range is 0-600, with a default of 30. Using the /t flag implies the /force option.
